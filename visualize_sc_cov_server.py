@@ -7,6 +7,7 @@ Created on Tue Feb 16 11:40:46 2021
 """
 
 import pandas as pd
+from datetime import datetime
 
 import plotly.express as px
 import plotly.graph_objects as go
@@ -25,6 +26,8 @@ df_mortes_packed = parse_info('covid_sc_mortes.csv')
 
 df_casos = unpack(df_casos_packed, 'dados')
 df_mortes = unpack(df_mortes_packed, 'dados')
+
+date = datetime.strftime(df_casos['date'].max(), '%d/%m/%Y')
 
 app = dash.Dash()
 
@@ -102,7 +105,23 @@ app.layout = html.Div([
             dcc.Graph(id='graph_mortes_novos')
         ], className='two columns'),
 
-    ], className='row', style={'width': '50%', 'display': 'inline-block'})
+    ], className='row', style={'width': '50%', 'display': 'inline-block'}),
+
+    html.Br(),
+
+    html.Footer([
+
+        html.Cite(['Fonte dos dados: https://www.coronavirus.sc.gov.br/noticias/'],
+                  id='reference',
+                  style={'fontFamily': 'Helvetica'}),
+
+        html.P([f'Atualizado até {date}'],
+               id='atualizado',
+               style={'fontFamily': 'Helvetica',
+                      'font-style': 'italic'})
+
+        ])
+
     ])
 
 
