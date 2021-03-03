@@ -115,7 +115,7 @@ app.layout = html.Div([
                   id='reference',
                   style={'fontFamily': 'Helvetica'}),
 
-        html.P([f'Atualizado até {date}'],
+        html.P([f'Última atualização: {date}'],
                id='atualizado',
                style={'fontFamily': 'Helvetica',
                       'font-style': 'italic'})
