@@ -7,6 +7,7 @@ Created on Tue Feb 16 11:40:46 2021
 """
 
 import pandas as pd
+import numpy
 from datetime import datetime
 
 import plotly.express as px
@@ -187,13 +188,14 @@ def update_graph_casos_novos(dropdown):
     casos_dia_anterior = 0
 
     for date, casos_dia in zip(df_copy.get('date'), df_copy.get(dropdown)):
-        try:
-            casos_novos.append({'date': date,
-                                'casos': int(casos_dia) - casos_dia_anterior})
-        except ValueError:
+        if numpy.isnan(casos_dia):
             casos_novos.append({'date': date,
                                 'casos': 0 - casos_dia_anterior})
-        casos_dia_anterior = casos_dia
+            casos_dia_anterior = 0
+        else:
+            casos_novos.append({'date': date,
+                                'casos': int(casos_dia) - casos_dia_anterior})
+            casos_dia_anterior = int(casos_dia)
 
     df_casos_novos = pd.DataFrame(casos_novos)
 
@@ -244,13 +246,14 @@ def update_graph_mortes_novos(dropdown):
     casos_dia_anterior = 0
 
     for date, casos_dia in zip(df_copy.get('date'), df_copy.get(dropdown)):
-        try:
-            casos_novos.append({'date': date,
-                                'casos': int(casos_dia) - casos_dia_anterior})
-        except ValueError:
+        if numpy.isnan(casos_dia):
             casos_novos.append({'date': date,
                                 'casos': 0 - casos_dia_anterior})
-        casos_dia_anterior = casos_dia
+            casos_dia_anterior = 0
+        else:
+            casos_novos.append({'date': date,
+                                'casos': int(casos_dia) - casos_dia_anterior})
+            casos_dia_anterior = int(casos_dia)
 
     df_casos_novos = pd.DataFrame(casos_novos)
 
