@@ -3,4 +3,4 @@ venv
 .DS_Store
 .env
 .spyproject/
-visualize_sc_cov_server.py
+visualize_sc_cov_test.py
