@@ -112,11 +112,11 @@ app.layout = html.Div([
                                          'display': 'inline-block'}
              ),
 
-    # Gráfico mortalidade
+    # Gráfico letalidade
     html.Div([
 
         html.Div([
-            dcc.Graph(id='graph_mortalidade')
+            dcc.Graph(id='graph_letalidade')
         ], className='two columns'),
 
     ], className='row', style={'width': '50%',
@@ -159,7 +159,7 @@ def update_graph_casos(dropdown):
                         '<br> %{x} '
                         )
 
-    chart.update_layout(title_text="Casos confirmados - total",
+    chart.update_layout(title_text="Casos confirmados [total]",
                         title_font_size=18,
                         xaxis_title='',
                         yaxis_title='')
@@ -184,7 +184,7 @@ def update_graph_mortes(dropdown):
                                       '<br> %{x} '
                         )
 
-    chart.update_layout(title_text="Óbitos - total",
+    chart.update_layout(title_text="Óbitos [total]",
                         title_font_size=18,
                         xaxis_title='',
                         yaxis_title='')
@@ -237,7 +237,7 @@ def update_graph_casos_novos(dropdown):
             )
         )
 
-    chart.update_layout(title_text="Casos confirmados - novos",
+    chart.update_layout(title_text="Casos confirmados [novos]",
                         title_font_size=18,
                         legend=dict(yanchor='top',
                                     y=0.99,
@@ -296,7 +296,7 @@ def update_graph_mortes_novos(dropdown):
             )
         )
 
-    chart.update_layout(title_text="Óbitos - novos",
+    chart.update_layout(title_text="Óbitos [novos]",
                         title_font_size=18,
                         legend=dict(yanchor='top',
                                     y=0.99,
@@ -310,52 +310,52 @@ def update_graph_mortes_novos(dropdown):
 
 
 @app.callback(
-    Output(component_id='graph_mortalidade', component_property='figure'),
+    Output(component_id='graph_letalidade', component_property='figure'),
     [Input(component_id='dropdown', component_property='value')]
     )
-def update_graph_mortalidade(dropdown):
-    """Atualiza o gráfico Mortalidade."""
+def update_graph_letalidade(dropdown):
+    """Atualiza o gráfico Letalidade."""
     df_copy_casos = df_casos
     df_copy_mortes = df_mortes
 
-    mortalidade = []
+    letalidade = []
 
     for date, casos, mortes in zip(df_copy_casos.get('date'),
                                    df_copy_casos.get(dropdown),
                                    df_copy_mortes.get(dropdown)):
         if numpy.isnan(casos) or numpy.isnan(mortes):
-            mortalidade.append({'date': date,
+            letalidade.append({'date': date,
                                 'casos': 0})
         else:
-            mortalidade.append({'date': date,
+            letalidade.append({'date': date,
                                 'casos': mortes / casos})
 
-    df_mortalidade = pd.DataFrame(mortalidade)
+    df_letalidade = pd.DataFrame(letalidade)
 
     chart = px.bar(
-        x=df_mortalidade['date'],
-        y=df_mortalidade['casos'])
+        x=df_letalidade['date'],
+        y=df_letalidade['casos'])
 
     chart.update_traces(marker_color='SaddleBrown',
-                        hovertemplate='<b> Mortalidade: %{y} </b>' +
+                        hovertemplate='<b> Letalidade: %{y} </b>' +
                                       '<br> %{x} '
                         )
 
-    # Média móvel de 7 dias
-    df_mortalidade['SMA_7_days'] = df_mortalidade.iloc[:, 1].rolling(window=7).mean()
+    # Média móvel de 30 dias
+    df_letalidade['SMA_30_days'] = df_letalidade.iloc[:, 1].rolling(window=30).mean()
     chart.add_trace(
         go.Scatter(
-            x=df_mortalidade['date'],
-            y=df_mortalidade['SMA_7_days'],
+            x=df_letalidade['date'],
+            y=df_letalidade['SMA_30_days'],
             mode='lines',
             line=go.scatter.Line(color='Maroon'),
-            name='Média móvel de 7 dias',
+            name='Média móvel de 30 dias',
             hovertemplate='<b> %{y} </b>' +
                           '<br> %{x} ',
             )
         )
 
-    chart.update_layout(title_text="Mortalidade",
+    chart.update_layout(title_text="Letalidade (Óbitos [total] / Casos confirmados [total])",
                         title_font_size=18,
                         legend=dict(yanchor='top',
                                     y=0.99,
