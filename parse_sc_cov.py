@@ -8,7 +8,7 @@ Created on Sun Feb 21 15:11:43 2021
 import csv
 import re
 import unicodedata
-import datetime
+from datetime import datetime
 
 import pandas as pd
 
@@ -16,22 +16,25 @@ import pandas as pd
 def parse_info(nome_do_arquivo):
     """Extrai do arquivo csv: data, cidade e número (de casos ou mortes).
 
-    Parameters
-    ----------
-    nome_do_arquivo (str): nome do arquivo csv com os dados
-
     Notes
     -----
     Arquivo .csv no formato: 'data, dados'
-    data (str): ex.: '2021-02-15T17:30:10-03:00'
-    dados (str): 'Abdon Batista - 187Abelardo Luz - 817Agrolândia...'
+        data (str): ex.: '2021-02-15T17:30:10-03:00'
+        dados (str): 'Abdon Batista - 187Abelardo Luz - 817Agrolândia...'
+
+    Parameters
+    ----------
+    nome_do_arquivo : str
+        Nome do arquivo csv com os dados.
 
     Returns #FIXME
     -------
-    Pandas DataFrame: [{'data': datetime, 'dados':{cid:núm,...}},{...},...]
-    data (datetime): YYYY-MM-DD
-    cidade (str): nome da cidade sem acentos
-    número (int): número de casos ou mortes
+    Pandas DataFrame
+        Formato: [{'data': datetime, 'dados':{cid:núm,...}},{...},...]
+        data (datetime): YYYY-MM-DD
+        cidade (str): nome da cidade sem acentos
+        número (int): número de casos ou mortes
+
     """
     with open(nome_do_arquivo) as csv_file:
         csv_reader = csv.reader(csv_file, delimiter=',')
@@ -50,9 +53,7 @@ def parse_info(nome_do_arquivo):
             date_cidnum_dict = {}  # {'data': datetime, 'dados':{cidade:número}}
 
             # Adiciona data em formato datetime
-            date_cidnum_dict['date'] = datetime.datetime.strptime(
-                row[0].split('T')[0], '%Y-%m-%d'
-                )
+            date_cidnum_dict['date'] = datetime.fromisoformat(row[0])
 
             # Extrai cidades, sem acento
             output = unicodedata.normalize('NFD', row[1]).encode('ascii', 'ignore')

@@ -6,7 +6,7 @@ Created on Tue Feb 16 15:03:06 2021
 @author: EduardoWork
 """
 
-import datetime
+from datetime import datetime
 import requests
 from bs4 import BeautifulSoup as bs
 
@@ -44,12 +44,7 @@ def check_new():
             site = requests.get('https://www.sc.gov.br' + element,
                                 headers={'User-Agent': 'Custom'})
             soup = bs(site.content, features="lxml")
-            # Data em str
-            current_date_str = soup.time['datetime']
-            # Data em datetime
-            current_date = datetime.datetime.strptime(
-                current_date_str.split('T')[0], '%Y-%m-%d'
-            )
+            current_date = datetime.fromisoformat(soup.time['datetime'])
             # Se é mais novo, adicionar. Caso contrário, updated = True
             if (current_date > last_date).bool():
                 new_elements.append(element)
